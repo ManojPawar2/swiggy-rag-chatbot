@@ -1,0 +1,2027 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Swiggy Annual Report AI</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap"
+        rel="stylesheet" />
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --orange: #FC8019;
+            --orange-dark: #d96a08;
+            --orange-glow: rgba(252, 128, 25, 0.25);
+            --orange-light: #FFF3E8;
+            --orange-mid: #FFE0C2;
+            --bg: #F4EFE9;
+            --white: #ffffff;
+            --text-dark: #1C1C1C;
+            --text-mid: #4A4040;
+            --text-muted: #9E9590;
+            --border: #E0D6CC;
+            --sidebar-min: 56px;
+            --sidebar-default: 290px;
+            --sidebar-max: 420px;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text-dark);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* grain overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 999;
+            opacity: 0.025;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            background-size: 200px 200px;
+        }
+
+        /* ═══════════════ NAV ═══════════════ */
+        nav {
+            height: 62px;
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+            box-shadow: 0 1px 0 var(--border), 0 2px 12px rgba(0, 0, 0, 0.04);
+            position: relative;
+            z-index: 10;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .sidebar-toggle {
+            width: 34px;
+            height: 34px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: background 0.2s, border-color 0.2s, transform 0.15s;
+            color: var(--text-muted);
+        }
+
+        .sidebar-toggle:hover {
+            background: var(--orange-light);
+            border-color: var(--orange);
+            color: var(--orange);
+            transform: scale(1.05);
+        }
+
+        .sidebar-toggle svg {
+            width: 16px;
+            height: 16px;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-toggle.collapsed svg {
+            transform: scaleX(-1);
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #FC8019 0%, #e06000 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-family: 'Sora', sans-serif;
+            font-weight: 800;
+            font-size: 17px;
+            box-shadow: 0 2px 8px rgba(252, 128, 25, 0.4);
+            animation: logoPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes logoPulse {
+
+            0%,
+            100% {
+                box-shadow: 0 2px 8px rgba(252, 128, 25, 0.4);
+            }
+
+            50% {
+                box-shadow: 0 2px 18px rgba(252, 128, 25, 0.7);
+            }
+        }
+
+        .logo-text .brand {
+            font-family: 'Sora', sans-serif;
+            font-weight: 700;
+            font-size: 15px;
+            display: block;
+            line-height: 1.1;
+        }
+
+        .logo-text .sub {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--orange);
+            letter-spacing: 0.09em;
+            text-transform: uppercase;
+        }
+
+        .nav-center {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-center-text {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-center-text svg {
+            width: 13px;
+            height: 13px;
+            color: var(--orange);
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #e8f5ed;
+            color: #267a42;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 20px;
+            border: 1px solid #bce8ce;
+        }
+
+        .badge-dot {
+            width: 7px;
+            height: 7px;
+            background: #34c068;
+            border-radius: 50%;
+            animation: pulse 2.2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1
+            }
+
+            50% {
+                opacity: 0.3
+            }
+        }
+
+        .nav-rag-tag {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 5px 10px;
+            border-radius: 6px;
+            background: linear-gradient(135deg, #fff3e8, #ffe0c0);
+            color: var(--orange-dark);
+            border: 1px solid var(--orange-mid);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        /* ═══════════════ LAYOUT ═══════════════ */
+        .app {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* ═══════════════ SIDEBAR ═══════════════ */
+        .sidebar {
+            width: var(--sidebar-default);
+            min-width: var(--sidebar-min);
+            max-width: var(--sidebar-max);
+            background: var(--white);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            overflow: hidden;
+            position: relative;
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .sidebar.collapsed {
+            width: var(--sidebar-min) !important;
+        }
+
+        .sidebar-inner {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar.collapsed .sidebar-inner {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .sidebar.collapsed .collapse-icons {
+            display: flex;
+        }
+
+        .sidebar-inner::-webkit-scrollbar {
+            width: 3px;
+        }
+
+        .sidebar-inner::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .sidebar-inner::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 10px;
+        }
+
+        /* ── SEARCH ── */
+        .sidebar-search-wrap {
+            padding: 14px 14px 10px;
+            border-bottom: 1px solid var(--border);
+            background: linear-gradient(160deg, #fffaf6 0%, #fff7f0 100%);
+        }
+
+        .sidebar-search-box {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--white);
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            padding: 9px 12px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .sidebar-search-box:focus-within {
+            border-color: var(--orange);
+            box-shadow: 0 0 0 3px rgba(252, 128, 25, 0.1);
+        }
+
+        .search-icon {
+            width: 15px;
+            height: 15px;
+            color: var(--text-muted);
+            flex-shrink: 0;
+        }
+
+        .sidebar-search-box input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13.5px;
+            color: var(--text-dark);
+            background: transparent;
+            min-width: 0;
+        }
+
+        .sidebar-search-box input::placeholder {
+            color: #c0b8b0;
+        }
+
+        .search-clear {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            display: none;
+            color: var(--text-muted);
+            transition: color 0.15s;
+            flex-shrink: 0;
+        }
+
+        .search-clear:hover {
+            color: var(--orange);
+        }
+
+        .search-clear svg {
+            width: 13px;
+            height: 13px;
+        }
+
+        .search-clear.visible {
+            display: flex;
+        }
+
+        .sidebar-search-hint {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 7px;
+            padding-left: 2px;
+        }
+
+        .suggestion.hidden {
+            display: none;
+        }
+
+        .no-results {
+            font-size: 13px;
+            color: var(--text-muted);
+            padding: 10px 12px;
+            font-style: italic;
+            display: none;
+        }
+
+        .no-results.visible {
+            display: block;
+        }
+
+        /* ── CATEGORY HEADERS ── */
+        .sidebar-section {
+            padding: 14px 12px 4px;
+        }
+
+        .sidebar-cat-header {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            padding: 7px 10px;
+            margin-bottom: 3px;
+            border-radius: 8px;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.18s;
+        }
+
+        .sidebar-cat-header:hover {
+            background: var(--bg);
+        }
+
+        .cat-emoji {
+            font-size: 16px;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+
+        .cat-label {
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            flex: 1;
+        }
+
+        .cat-chevron {
+            width: 13px;
+            height: 13px;
+            color: var(--text-muted);
+            transition: transform 0.25s ease;
+            flex-shrink: 0;
+        }
+
+        .cat-chevron.open {
+            transform: rotate(180deg);
+        }
+
+        .cat-questions {
+            overflow: hidden;
+            max-height: 600px;
+            transition: max-height 0.35s ease, opacity 0.25s ease;
+            opacity: 1;
+        }
+
+        .cat-questions.closed {
+            max-height: 0;
+            opacity: 0;
+        }
+
+        /* ── SUGGESTIONS with shimmer ── */
+        .suggestion {
+            display: flex;
+            align-items: flex-start;
+            gap: 9px;
+            padding: 9px 10px;
+            border-radius: 9px;
+            cursor: pointer;
+            margin-bottom: 1px;
+            position: relative;
+            overflow: hidden;
+            transition: background 0.16s, transform 0.12s;
+        }
+
+        /* shimmer sweep on hover */
+        .suggestion::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 60%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(252, 128, 25, 0.08), transparent);
+            transition: left 0.4s ease;
+            pointer-events: none;
+        }
+
+        .suggestion:hover::after {
+            left: 150%;
+        }
+
+        /* orange left bar */
+        .suggestion::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 2.5px;
+            height: 0;
+            background: var(--orange);
+            border-radius: 2px;
+            transition: height 0.2s ease;
+        }
+
+        .suggestion:hover {
+            background: var(--orange-light);
+            transform: translateX(3px);
+        }
+
+        .suggestion:hover::before {
+            height: 65%;
+        }
+
+        .suggestion:hover .sug-icon {
+            color: var(--orange);
+        }
+
+        .sug-icon {
+            width: 15px;
+            height: 15px;
+            color: #d0c8c0;
+            flex-shrink: 0;
+            margin-top: 2px;
+            transition: color 0.16s;
+        }
+
+        .suggestion p {
+            font-size: 14px;
+            line-height: 1.5;
+            color: var(--text-mid);
+        }
+
+        .sidebar-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 6px 12px;
+        }
+
+        /* ── DOC PILL ── */
+        .doc-pill {
+            margin: 10px 12px 18px;
+            background: var(--white);
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+            padding: 11px 13px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .doc-pill-icon {
+            width: 34px;
+            height: 34px;
+            background: var(--orange-light);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .doc-pill-icon svg {
+            width: 16px;
+            height: 16px;
+            color: var(--orange);
+        }
+
+        .doc-pill-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .doc-pill-name {
+            font-family: 'Sora', sans-serif;
+            font-size: 12.5px;
+            font-weight: 700;
+            color: var(--text-dark);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .doc-pill-status {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 11.5px;
+            color: #2a7d47;
+            font-weight: 500;
+            margin-top: 2px;
+        }
+
+        .doc-pill-dot {
+            width: 6px;
+            height: 6px;
+            background: #34c068;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+            flex-shrink: 0;
+        }
+
+        /* ── RESIZE HANDLE ── */
+        .resize-handle {
+            width: 5px;
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            cursor: col-resize;
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .resize-handle::after {
+            content: '';
+            width: 3px;
+            height: 36px;
+            background: var(--border);
+            border-radius: 4px;
+            transition: background 0.2s, height 0.2s;
+        }
+
+        .resize-handle:hover::after,
+        .resize-handle.dragging::after {
+            background: var(--orange);
+            height: 56px;
+        }
+
+        /* collapsed icon strip */
+        .collapse-icons {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 0;
+            width: var(--sidebar-min);
+        }
+
+        .ci-dot {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            background: var(--bg);
+            cursor: pointer;
+            transition: background 0.18s;
+        }
+
+        .ci-dot:hover {
+            background: var(--orange-light);
+        }
+
+        /* ═══════════════ CHAT AREA ═══════════════ */
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            min-width: 0;
+            position: relative;
+        }
+
+        /* ═══════════════ EMPTY STATE with floating orbs ═══════════════ */
+        .empty-state {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* animated gradient mesh background */
+        .empty-state::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse at 20% 50%, rgba(252, 128, 25, 0.07) 0%, transparent 55%),
+                radial-gradient(ellipse at 80% 30%, rgba(252, 180, 80, 0.05) 0%, transparent 50%),
+                radial-gradient(ellipse at 60% 80%, rgba(252, 128, 25, 0.04) 0%, transparent 50%);
+            animation: meshMove 8s ease-in-out infinite alternate;
+            pointer-events: none;
+        }
+
+        @keyframes meshMove {
+            0% {
+                background-position: 0% 0%;
+            }
+
+            100% {
+                background-position: 100% 100%;
+            }
+        }
+
+        /* floating orbs */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(252, 128, 25, 0.13) 0%, transparent 70%);
+            pointer-events: none;
+            animation: floatOrb linear infinite;
+        }
+
+        .orb-1 {
+            width: 180px;
+            height: 180px;
+            top: 10%;
+            left: 5%;
+            animation-duration: 14s;
+            animation-delay: 0s;
+        }
+
+        .orb-2 {
+            width: 120px;
+            height: 120px;
+            top: 60%;
+            right: 8%;
+            animation-duration: 18s;
+            animation-delay: -4s;
+        }
+
+        .orb-3 {
+            width: 90px;
+            height: 90px;
+            bottom: 15%;
+            left: 30%;
+            animation-duration: 11s;
+            animation-delay: -7s;
+        }
+
+        .orb-4 {
+            width: 140px;
+            height: 140px;
+            top: 25%;
+            right: 20%;
+            animation-duration: 16s;
+            animation-delay: -2s;
+        }
+
+        @keyframes floatOrb {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 0.6;
+            }
+
+            25% {
+                transform: translate(18px, -14px) scale(1.04);
+                opacity: 0.9;
+            }
+
+            50% {
+                transform: translate(-10px, 20px) scale(0.96);
+                opacity: 0.7;
+            }
+
+            75% {
+                transform: translate(14px, 8px) scale(1.02);
+                opacity: 0.85;
+            }
+
+            100% {
+                transform: translate(0, 0) scale(1);
+                opacity: 0.6;
+            }
+        }
+
+        .empty-icon-wrap {
+            position: relative;
+            z-index: 1;
+        }
+
+        .empty-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #fff3e8, #ffe0c0);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--orange-mid);
+            box-shadow: 0 0 0 10px rgba(252, 128, 25, 0.07);
+            animation: floatIcon 3.5s ease-in-out infinite;
+        }
+
+        @keyframes floatIcon {
+
+            0%,
+            100% {
+                transform: translateY(0);
+                box-shadow: 0 0 0 10px rgba(252, 128, 25, 0.07);
+            }
+
+            50% {
+                transform: translateY(-8px);
+                box-shadow: 0 12px 28px rgba(252, 128, 25, 0.15);
+            }
+        }
+
+        .empty-icon svg {
+            width: 30px;
+            height: 30px;
+            color: var(--orange);
+        }
+
+        .empty-state h2 {
+            font-family: 'Sora', sans-serif;
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text-dark);
+            letter-spacing: -0.02em;
+            position: relative;
+            z-index: 1;
+        }
+
+        .empty-state h2 span {
+            color: var(--orange);
+        }
+
+        .empty-state p {
+            font-size: 15px;
+            color: var(--text-muted);
+            max-width: 340px;
+            line-height: 1.65;
+            position: relative;
+            z-index: 1;
+        }
+
+        .empty-chips {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 480px;
+            margin-top: 4px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .chip {
+            background: var(--white);
+            border: 1.5px solid var(--border);
+            color: var(--text-mid);
+            font-size: 12.5px;
+            font-weight: 500;
+            padding: 7px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background 0.18s, border-color 0.18s, color 0.18s, transform 0.12s, box-shadow 0.18s;
+            animation: chipIn 0.5s ease both;
+        }
+
+        .chip:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .chip:nth-child(2) {
+            animation-delay: 0.18s;
+        }
+
+        .chip:nth-child(3) {
+            animation-delay: 0.26s;
+        }
+
+        .chip:nth-child(4) {
+            animation-delay: 0.34s;
+        }
+
+        .chip:nth-child(5) {
+            animation-delay: 0.42s;
+        }
+
+        @keyframes chipIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .chip:hover {
+            background: var(--orange-light);
+            border-color: var(--orange);
+            color: var(--orange-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 14px rgba(252, 128, 25, 0.15);
+        }
+
+        /* ═══════════════ MESSAGES ═══════════════ */
+        .messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px 36px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .messages::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .messages::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .messages::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 10px;
+        }
+
+        .msg {
+            display: flex;
+            gap: 10px;
+            max-width: 82%;
+            animation: fadeUp 0.3s ease both;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .msg.user {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .msg.bot {
+            align-self: flex-start;
+        }
+
+        .msg-avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-family: 'Sora', sans-serif;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .msg.user .msg-avatar {
+            background: linear-gradient(135deg, #FC8019, #e06000);
+            color: white;
+            box-shadow: 0 2px 8px rgba(252, 128, 25, 0.3);
+        }
+
+        .msg.bot .msg-avatar {
+            background: var(--white);
+            border: 1.5px solid var(--border);
+            color: var(--orange);
+        }
+
+        .msg-content {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .msg-bubble {
+            padding: 12px 16px;
+            border-radius: 16px;
+            font-size: 15px;
+            line-height: 1.68;
+        }
+
+        .msg.user .msg-bubble {
+            background: linear-gradient(135deg, #FC8019 0%, #e06000 100%);
+            color: white;
+            border-bottom-right-radius: 4px;
+            box-shadow: 0 3px 14px rgba(252, 128, 25, 0.25);
+        }
+
+        .msg.bot .msg-bubble {
+            background: var(--white);
+            border: 1.5px solid var(--border);
+            color: var(--text-dark);
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        /* source row */
+        .msg-source {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+            color: var(--text-muted);
+            flex-wrap: wrap;
+        }
+
+        .msg-source svg {
+            width: 12px;
+            height: 12px;
+            flex-shrink: 0;
+        }
+
+        /* page tag pop-in animation */
+        .page-tag {
+            background: var(--orange-light);
+            color: var(--orange-dark);
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 5px;
+            border: 1px solid var(--orange-mid);
+            display: inline-block;
+            animation: tagPopIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+        }
+
+        @keyframes tagPopIn {
+            from {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* skeleton loader */
+        .skeleton-msg {
+            display: flex;
+            gap: 10px;
+            max-width: 72%;
+            align-self: flex-start;
+            animation: fadeUp 0.3s ease both;
+        }
+
+        .skeleton-avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: #ede6de;
+            flex-shrink: 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .skeleton-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding-top: 4px;
+        }
+
+        .skeleton-line {
+            height: 14px;
+            border-radius: 7px;
+            background: #ede6de;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .skeleton-line.long {
+            width: 85%;
+        }
+
+        .skeleton-line.med {
+            width: 65%;
+        }
+
+        .skeleton-line.short {
+            width: 45%;
+        }
+
+        .skeleton-avatar::after,
+        .skeleton-line::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.55) 50%, transparent 100%);
+            animation: shimmerSlide 1.4s infinite;
+        }
+
+        @keyframes shimmerSlide {
+            0% {
+                transform: translateX(-100%);
+            }
+
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        /* typing dots (fallback) */
+        .typing {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+            padding: 12px 16px;
+        }
+
+        .typing span {
+            width: 7px;
+            height: 7px;
+            background: #d4cbc4;
+            border-radius: 50%;
+            animation: bounce 1.3s infinite;
+        }
+
+        .typing span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            60%,
+            100% {
+                transform: translateY(0)
+            }
+
+            30% {
+                transform: translateY(-7px)
+            }
+        }
+
+        /* typewriter cursor */
+        .typewriter-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1em;
+            background: var(--orange);
+            margin-left: 2px;
+            vertical-align: text-bottom;
+            animation: blink 0.7s step-end infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1
+            }
+
+            50% {
+                opacity: 0
+            }
+        }
+
+        /* ═══════════════ FORMATTED ANSWER ═══════════════ */
+        .bot-answer {
+            font-size: 15px;
+            line-height: 1.72;
+            color: var(--text-dark);
+        }
+
+        .bot-answer p {
+            margin-bottom: 10px;
+        }
+
+        .bot-answer p:last-child {
+            margin-bottom: 0;
+        }
+
+        .bot-answer strong {
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .bot-answer ul,
+        .bot-answer ol {
+            margin: 8px 0 10px 0;
+            padding-left: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .bot-answer li {
+            line-height: 1.6;
+        }
+
+        .bot-answer .ans-section-title {
+            font-family: 'Sora', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--orange-dark);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin: 12px 0 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .bot-answer .ans-section-title:first-child {
+            margin-top: 0;
+        }
+
+        .bot-answer .highlight-box {
+            background: var(--orange-light);
+            border-left: 3px solid var(--orange);
+            border-radius: 0 7px 7px 0;
+            padding: 9px 13px;
+            margin: 8px 0;
+            font-size: 14.5px;
+        }
+
+        .bot-answer .not-found {
+            display: flex;
+            align-items: flex-start;
+            gap: 9px;
+            background: #fdf6f0;
+            border: 1.5px solid var(--orange-mid);
+            border-radius: 10px;
+            padding: 12px 14px;
+            font-size: 14px;
+            color: var(--text-mid);
+        }
+
+        .bot-answer .not-found svg {
+            width: 16px;
+            height: 16px;
+            color: var(--orange);
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        /* ═══════════════ INPUT BAR ═══════════════ */
+        .input-bar {
+            padding: 14px 36px 18px;
+            border-top: 1px solid var(--border);
+            background: var(--white);
+            position: relative;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 13px 18px;
+            border: 1.5px solid var(--border);
+            border-radius: 14px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            background: var(--bg);
+            color: var(--text-dark);
+            outline: none;
+            resize: none;
+            transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+            line-height: 1.5;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+
+        .chat-input:focus {
+            border-color: var(--orange);
+            box-shadow: 0 0 0 3px rgba(252, 128, 25, 0.12);
+            background: var(--white);
+        }
+
+        .chat-input::placeholder {
+            color: #c0b8b0;
+        }
+
+        /* send button with ripple */
+        .send-btn {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #FC8019 0%, #e06000 100%);
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: transform 0.15s, box-shadow 0.2s;
+            box-shadow: 0 3px 12px rgba(252, 128, 25, 0.35);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .send-btn:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 6px 20px rgba(252, 128, 25, 0.45);
+        }
+
+        .send-btn:active {
+            transform: scale(0.97);
+        }
+
+        .send-btn svg {
+            width: 18px;
+            height: 18px;
+            color: white;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ripple circle */
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(0);
+            animation: rippleAnim 0.55s linear;
+            pointer-events: none;
+        }
+
+        @keyframes rippleAnim {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        .input-hint {
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+
+        @media (max-width: 680px) {
+            .sidebar {
+                display: none;
+            }
+
+            .messages,
+            .input-bar {
+                padding-left: 16px;
+                padding-right: 16px;
+            }
+
+            .nav-center {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAV -->
+    <nav>
+        <div class="nav-left">
+            <button class="sidebar-toggle" id="sidebarToggle" title="Toggle sidebar">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2" />
+                    <line x1="9" y1="3" x2="9" y2="21" />
+                </svg>
+            </button>
+            <div class="nav-logo">
+                <div class="logo-icon">S</div>
+                <div class="logo-text">
+                    <span class="brand">Swiggy</span>
+                    <span class="sub">Annual Report AI</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="nav-center">
+            <div class="nav-center-text">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
+                </svg>
+                swiggy_annual_report.pdf
+            </div>
+        </div>
+
+        <div class="nav-right">
+            <span class="nav-rag-tag">RAG · FAISS</span>
+            <div class="nav-badge">
+                <div class="badge-dot"></div>
+                Indexed &amp; Ready
+            </div>
+        </div>
+    </nav>
+
+    <div class="app">
+
+        <!-- ══════════ SIDEBAR ══════════ -->
+        <aside class="sidebar" id="sidebar">
+
+            <div class="collapse-icons" id="collapseIcons">
+                <div class="ci-dot" title="Financials">💰</div>
+                <div class="ci-dot" title="Operations">🚀</div>
+                <div class="ci-dot" title="Strategy">⚠️</div>
+                <div class="ci-dot" title="Leadership">👥</div>
+            </div>
+
+            <div class="sidebar-inner" id="sidebarInner">
+
+                <!-- Search -->
+                <div class="sidebar-search-wrap">
+                    <div class="sidebar-search-box">
+                        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8" />
+                            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                        </svg>
+                        <input type="text" id="sidebarSearch" placeholder="Search questions..."
+                            oninput="filterSuggestions(this.value)" />
+                        <button class="search-clear" id="searchClear" onclick="clearSearch()">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <line x1="18" y1="6" x2="6" y2="18" />
+                                <line x1="6" y1="6" x2="18" y2="18" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="sidebar-search-hint">Click any question to ask instantly</div>
+                </div>
+
+                <!-- 💰 Financials -->
+                <div class="sidebar-section">
+                    <div class="sidebar-cat-header" onclick="toggleCat('fin')">
+                        <span class="cat-emoji">💰</span>
+                        <span class="cat-label">Financials</span>
+                        <svg class="cat-chevron open" id="chev-fin" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2.5">
+                            <polyline points="6 9 12 15 18 9" />
+                        </svg>
+                    </div>
+                    <div class="cat-questions" id="cat-fin">
+                        <div class="suggestion" onclick="ask('What was Swiggy\'s total revenue in FY2024?')"><svg
+                                class="sug-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
+                                <polyline points="16 7 22 7 22 13" />
+                            </svg>
+                            <p>What was Swiggy's total revenue in FY2024?</p>
+                        </div>
+                        <div class="suggestion" onclick="ask('What is Swiggy\'s net loss or profit for the year?')"><svg
+                                class="sug-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="1" x2="12" y2="23" />
+                                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                            </svg>
+                            <p>What is Swiggy's net loss or profit?</p>
+                        </div>
+                        <div class="suggestion" onclick="ask('What are the key EBITDA highlights?')"><svg
+                                class="sug-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="3" width="20" height="14" rx="2" />
+                                <line x1="8" y1="21" x2="16" y2="21" />
+                                <line x1="12" y1="17" x2="12" y2="21" />
+                            </svg>
+                            <p>What are the key EBITDA highlights?</p>
+                        </div>
+                        <div class="suggestion" onclick="ask('What is the year-on-year revenue growth percentage?')">
+                            <svg class="sug-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+                                <polyline points="17 6 23 6 23 12" />
+                            </svg>
+                            <p>What is the YoY revenue growth percentage?</p>
+                        </div>
+                        <div class="suggestion" onclick="ask('What is the breakdown of operational expenses?')"><svg
+                                class="sug-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10" />
+                                <polyline points="12 6 12 12 16 14" />
+                            </svg>
+                            <p>What is the breakdown of operational expenses?</p>
+                        </div>
+                        <div class="suggestion" onclick="ask('What is Swiggy\'s cash flow from operations?')"><svg
+                                class="sug-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                            </svg>
+                            <p>What is Swiggy's cash flow from operations?</p>
+                        </div>
+                        <div class="suggestion" onclick="ask('What are the total assets and liabilities of Swiggy?')">
+                            <svg class="sug-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <rect x="2" y="7" width="20" height="14" rx="2" />
+                                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                            </svg>
+                            <p>What are the total assets and liabilities?</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sidebar-divider"></div>
+
+                <!-- 🚀 Operations -->
+                <div class="sidebar-section">
+                    <div class="sidebar-cat-header" onclick="toggleCat('ops')">
+                        <span class="cat-emoji">🚀</span>
+                        <span class="cat-label">Operations</span>
+                        <svg class="cat-chevron open" id="chev-ops" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2.5">
+                            <polyline points="6 9 12 15 18 9" />
+                        </svg>
+                    </div>
+                    <div class="cat-questions" id="cat-ops">
+                        <div class="suggestion" onclick="ask('How many cities does Swiggy operate in?')"><svg
+                                class="sug-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10" />
+                                <line x1="2" y1="12" x2="22" y2="12" />
+                                <path
+                                    d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                            </svg>
+                            <p>How many cities does Swiggy operate in?</p>
+                        </div>
+                        <div class="suggestion" onclick="ask('How many delivery partners does Swiggy have?')"><svg
+                                class="sug-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="8" r="4" />
+                                <path d="M6 20v-2a6 6 0 0 1 12 0v2" />
+                            </svg>
+                            <p>How many delivery partners does Swiggy have?</p>
+                        </div>
+                        <div class="suggestion" onclick="ask('What is the average order value on Swiggy?')"><svg
+                                class="sug-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+                                <line x1="3" y1="6" x2="21" y2="6" />
+                                <path d="M16 10a4 4 0 0 1-8 0" />
+                            </svg>
+                            <p>What is the average order value?</p>
+                        </div>
+                        <div class="suggestion" onclick="ask('What is the total number of orders placed on Swiggy?')">
+                            <svg class="sug-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <polyline points="9 11 12 14 22 4" />
+                                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+                            </svg>
+                            <p>What is the total number of orders placed?</p>
+                        </div>
+                        <div class="suggestion"
+                            onclick="ask('How many restaurant partners are on the Swiggy platform?')"><svg
+                                class="sug-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 11l19-9-9 19-2-8-8-2z" />
+                            </svg>
+                            <p>How many restaurant partners are on Swiggy?</p>
+                        </div>
+                        <div class="suggestion" onclick="ask('What is the market share of Swiggy in food delivery?')">
+                            <svg class="sug-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M21.21 15.89A10 10 0 1 1 8 2.83" />
+                                <path d="M22 12A10 10 0 0 0 12 2v10z" />
+                            </svg>
+                            <p>What is Swiggy's market share in food delivery?</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sidebar-divider"></div>
+
+                <!-- ⚠️ Strategy & Risk -->
+                <div class="sidebar-section">
+                    <div class="sidebar-cat-header" onclick="toggleCat('str')">
+                        <span class="cat-emoji">⚠️</span>
+                        <span class="cat-label">Strategy &amp; Risk</span>
+                        <svg class="cat-chevron open" id="chev-str" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2.5">
+                            <polyline points="6 9 12 15 18 9" />
+                        </svg>
+                    </div>
+                    <div class="cat-questions" id="cat-str">
+                        <div class="suggestion"
+                            onclick="ask('What are the major risk factors mentioned in the report?')"><svg
+                                class="sug-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path
+                                    d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                                <line x1="12" y1="9" x2="12" y2="13" />
+                                <line x1="12" y1="17" x2="12.01" y2="17" />
+                            </svg>
+                            <p>What are the major risk factors mentioned?</p>
+                        </div>
+                        <div class="suggestion" onclick="ask('What is Swiggy\'s strategy for future growth?')"><svg
+                                class="sug-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="3" />
+                                <path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14" />
+                            </svg>
+                            <p>What is Swiggy's strategy for future growth?</p>
+                        </div>
+                        <div class="suggestion" onclick="ask('What are the key business segments of Swiggy?')"><svg
+                                class="sug-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="7" height="7" />
+                                <rect x="14" y="3" width="7" height="7" />
+                                <rect x="14" y="14" width="7" height="7" />
+                                <rect x="3" y="14" width="7" height="7" />
+                            </svg>
+                            <p>What are the key business segments?</p>
+                        </div>
+                        <div class="suggestion"
+                            onclick="ask('What are Swiggy\'s competitive advantages mentioned in the report?')"><svg
+                                class="sug-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polygon
+                                    points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                            </svg>
+                            <p>What are Swiggy's competitive advantages?</p>
+                        </div>
+                        <div class="suggestion"
+                            onclick="ask('What does the report say about Swiggy\'s technology investments?')"><svg
+                                class="sug-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="16 18 22 12 16 6" />
+                                <polyline points="8 6 2 12 8 18" />
+                            </svg>
+                            <p>What does the report say about tech investments?</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sidebar-divider"></div>
+
+                <!-- 👥 Leadership -->
+                <div class="sidebar-section">
+                    <div class="sidebar-cat-header" onclick="toggleCat('lead')">
+                        <span class="cat-emoji">👥</span>
+                        <span class="cat-label">Leadership</span>
+                        <svg class="cat-chevron open" id="chev-lead" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2.5">
+                            <polyline points="6 9 12 15 18 9" />
+                        </svg>
+                    </div>
+                    <div class="cat-questions" id="cat-lead">
+                        <div class="suggestion" onclick="ask('Who are the key management personnel?')"><svg
+                                class="sug-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                                <circle cx="9" cy="7" r="4" />
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                            </svg>
+                            <p>Who are the key management personnel?</p>
+                        </div>
+                        <div class="suggestion" onclick="ask('What is the board of directors composition at Swiggy?')">
+                            <svg class="sug-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                                <circle cx="9" cy="7" r="4" />
+                            </svg>
+                            <p>What is the board of directors composition?</p>
+                        </div>
+                        <div class="suggestion"
+                            onclick="ask('What does the CEO say about the company\'s performance?')"><svg
+                                class="sug-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                            </svg>
+                            <p>What does the CEO say about performance?</p>
+                        </div>
+                        <div class="suggestion" onclick="ask('What is the remuneration of key managerial personnel?')">
+                            <svg class="sug-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <rect x="2" y="3" width="20" height="14" rx="2" />
+                                <line x1="8" y1="21" x2="16" y2="21" />
+                                <line x1="12" y1="17" x2="12" y2="21" />
+                            </svg>
+                            <p>What is the remuneration of key personnel?</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sidebar-divider"></div>
+
+                <!-- Doc pill -->
+                <div class="doc-pill">
+                    <div class="doc-pill-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                            <polyline points="14 2 14 8 20 8" />
+                        </svg>
+                    </div>
+                    <div class="doc-pill-info">
+                        <div class="doc-pill-name">swiggy_annual_report.pdf</div>
+                        <div class="doc-pill-status"><span class="doc-pill-dot"></span>Indexed &amp; ready</div>
+                    </div>
+                </div>
+
+            </div><!-- /sidebar-inner -->
+            <div class="resize-handle" id="resizeHandle"></div>
+        </aside>
+
+        <!-- ══════════ CHAT ══════════ -->
+        <div class="chat-area">
+
+            <!-- Empty state with floating orbs -->
+            <div class="empty-state" id="emptyState">
+                <div class="orb orb-1"></div>
+                <div class="orb orb-2"></div>
+                <div class="orb orb-3"></div>
+                <div class="orb orb-4"></div>
+
+                <div class="empty-icon-wrap">
+                    <div class="empty-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                        </svg>
+                    </div>
+                </div>
+                <h2>Ask anything about <span>Swiggy</span></h2>
+                <p>Answers are grounded strictly in the Swiggy Annual Report. Every response includes page citations.
+                </p>
+                <div class="empty-chips">
+                    <div class="chip" onclick="ask('What was the total revenue in FY2024?')">📊 Revenue FY2024</div>
+                    <div class="chip" onclick="ask('What are the major risk factors?')">⚠️ Risk Factors</div>
+                    <div class="chip" onclick="ask('How many cities does Swiggy operate in?')">🌍 City Coverage</div>
+                    <div class="chip" onclick="ask('Who are the key management personnel?')">👥 Leadership</div>
+                    <div class="chip" onclick="ask('What is Swiggy\'s EBITDA?')">💹 EBITDA</div>
+                </div>
+            </div>
+
+            <div class="messages" id="messages"></div>
+
+            <div class="input-bar">
+                <div class="input-row">
+                    <textarea id="chatInput" class="chat-input" rows="1"
+                        placeholder="Ask anything about the Swiggy Annual Report..." onkeydown="handleKey(event)"
+                        oninput="autoResize(this)"></textarea>
+                    <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="22" y1="2" x2="11" y2="13" />
+                            <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="input-hint">Grounded in Swiggy Annual Report · Page citations with every answer · Enter to
+                    send</div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        /* ── SIDEBAR TOGGLE ── */
+        const sidebar = document.getElementById('sidebar');
+        const toggleBtn = document.getElementById('sidebarToggle');
+        const collapseIcons = document.getElementById('collapseIcons');
+        let isCollapsed = false;
+
+        toggleBtn.addEventListener('click', () => {
+            isCollapsed = !isCollapsed;
+            if (isCollapsed) {
+                sidebar.classList.add('collapsed');
+                toggleBtn.classList.add('collapsed');
+                collapseIcons.style.display = 'flex';
+            } else {
+                sidebar.classList.remove('collapsed');
+                toggleBtn.classList.remove('collapsed');
+                collapseIcons.style.display = 'none';
+            }
+        });
+
+        /* ── DRAG-TO-RESIZE SIDEBAR ── */
+        const handle = document.getElementById('resizeHandle');
+        let dragging = false, startX, startW;
+
+        handle.addEventListener('mousedown', e => {
+            dragging = true; startX = e.clientX; startW = sidebar.offsetWidth;
+            handle.classList.add('dragging');
+            document.body.style.cursor = 'col-resize';
+            document.body.style.userSelect = 'none';
+        });
+
+        document.addEventListener('mousemove', e => {
+            if (!dragging) return;
+            const newW = Math.min(Math.max(startW + e.clientX - startX, 56), 420);
+            sidebar.style.width = newW + 'px';
+            if (newW <= 70 && !isCollapsed) {
+                sidebar.classList.add('collapsed'); toggleBtn.classList.add('collapsed');
+                collapseIcons.style.display = 'flex'; isCollapsed = true;
+            } else if (newW > 100 && isCollapsed) {
+                sidebar.classList.remove('collapsed'); toggleBtn.classList.remove('collapsed');
+                collapseIcons.style.display = 'none'; isCollapsed = false;
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            if (!dragging) return;
+            dragging = false; handle.classList.remove('dragging');
+            document.body.style.cursor = ''; document.body.style.userSelect = '';
+        });
+
+        /* ── COLLAPSIBLE CATEGORIES ── */
+        function toggleCat(id) {
+            document.getElementById('cat-' + id).classList.toggle('closed');
+            document.getElementById('chev-' + id).classList.toggle('open');
+        }
+
+        /* ── SEND BUTTON RIPPLE ── */
+        document.getElementById('sendBtn').addEventListener('click', function (e) {
+            const btn = this;
+            const rect = btn.getBoundingClientRect();
+            const size = Math.max(btn.offsetWidth, btn.offsetHeight);
+            const r = document.createElement('span');
+            r.className = 'ripple';
+            r.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX - rect.left - size / 2}px;top:${e.clientY - rect.top - size / 2}px`;
+            btn.appendChild(r);
+            setTimeout(() => r.remove(), 600);
+        });
+
+        /* ── CHAT ── */
+        function handleKey(e) {
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+        }
+
+        function autoResize(el) {
+            el.style.height = 'auto';
+            el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+        }
+
+        function ask(question) {
+            document.getElementById('chatInput').value = question;
+            sendMessage();
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const query = input.value.trim();
+            if (!query) return;
+
+            document.getElementById('emptyState').style.display = 'none';
+            addUserMsg(query);
+            input.value = ''; input.style.height = 'auto';
+
+            const skid = addSkeleton();
+
+            fetch('/ask', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ question: query })
+            })
+                .then(r => r.json())
+                .then(data => {
+                    removeSkeleton(skid);
+                    addBotMsg(data.answer, data.pages || []);
+                })
+                .catch(() => {
+                    removeSkeleton(skid);
+                    addBotMsg("Backend not reachable. Make sure your Flask server is running on port 5000.", []);
+                });
+        }
+
+        function addUserMsg(text) {
+            const d = document.createElement('div');
+            d.className = 'msg user';
+            d.innerHTML = `<div class="msg-avatar">U</div><div class="msg-content"><div class="msg-bubble">${esc(text)}</div></div>`;
+            document.getElementById('messages').appendChild(d);
+            scrollDown();
+        }
+
+        /* ── SKELETON LOADER ── */
+        function addSkeleton() {
+            const id = 'sk' + Date.now();
+            const d = document.createElement('div');
+            d.className = 'skeleton-msg'; d.id = id;
+            d.innerHTML = `
+      <div class="skeleton-avatar"></div>
+      <div class="skeleton-body">
+        <div class="skeleton-line long"></div>
+        <div class="skeleton-line med"></div>
+        <div class="skeleton-line short"></div>
+      </div>`;
+            document.getElementById('messages').appendChild(d);
+            scrollDown();
+            return id;
+        }
+
+        function removeSkeleton(id) {
+            const el = document.getElementById(id);
+            if (el) el.remove();
+        }
+
+        /* ── BOT MESSAGE with typewriter ── */
+        function addBotMsg(text, pages) {
+            const d = document.createElement('div');
+            d.className = 'msg bot';
+            const bubbleId = 'bubble-' + Date.now();
+
+            // Build page tags with staggered pop-in
+            const pageTags = pages.map((p, i) =>
+                `<span class="page-tag" style="animation-delay:${i * 0.1 + 0.3}s">Pg ${p}</span>`
+            ).join(' ');
+
+            const source = pages.length
+                ? `<div class="msg-source">
+           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+           Swiggy Annual Report &nbsp;${pageTags}
+         </div>`
+                : '';
+
+            d.innerHTML = `
+      <div class="msg-avatar">S</div>
+      <div class="msg-content">
+        <div class="msg-bubble" id="${bubbleId}"></div>
+        ${source}
+      </div>`;
+
+            document.getElementById('messages').appendChild(d);
+            scrollDown();
+
+            // Typewriter effect on the formatted HTML
+            typewriteHTML(bubbleId, formatAnswer(text));
+        }
+
+        /* ── TYPEWRITER ── */
+        function typewriteHTML(targetId, html) {
+            const el = document.getElementById(targetId);
+            if (!el) return;
+
+            // First render invisible to measure
+            el.innerHTML = html;
+            const fullText = el.innerText;
+            el.innerHTML = '';
+
+            // Add blinking cursor
+            const cursor = document.createElement('span');
+            cursor.className = 'typewriter-cursor';
+            el.appendChild(cursor);
+
+            let i = 0;
+            const SPEED = 14; // ms per character — feels natural
+
+            function tick() {
+                if (i < fullText.length) {
+                    // Insert character before cursor
+                    const textNode = document.createTextNode(fullText[i]);
+                    el.insertBefore(textNode, cursor);
+                    i++;
+                    scrollDown();
+                    setTimeout(tick, SPEED);
+                } else {
+                    // Done — remove cursor, render proper formatted HTML
+                    setTimeout(() => {
+                        el.innerHTML = html;
+                        scrollDown();
+                    }, 200);
+                }
+            }
+
+            // Small delay before starting
+            setTimeout(tick, 120);
+        }
+
+        /* ── ANSWER FORMATTER ── */
+        function formatAnswer(text) {
+            if (text.toLowerCase().includes('not available in the provided report')) {
+                return `<div class="bot-answer"><div class="not-found">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span>${esc(text)}</span>
+      </div></div>`;
+            }
+
+            let html = '<div class="bot-answer">';
+            const lines = text.split('\n').filter(l => l.trim() !== '');
+
+            lines.forEach(line => {
+                const t = line.trim();
+                if (/^[-•]\s+/.test(t)) {
+                    html += `<ul><li>${esc(t.replace(/^[-•]\s+/, ''))}</li></ul>`;
+                } else if (/^\d+\.\s+/.test(t)) {
+                    html += `<ol><li>${esc(t.replace(/^\d+\.\s+/, ''))}</li></ol>`;
+                } else if (t === t.toUpperCase() && t.length > 3 && t.length < 60 && /[A-Z]/.test(t)) {
+                    html += `<div class="ans-section-title">${esc(t)}</div>`;
+                } else if (/₹|%|\bcrore\b|\blakh\b|\bbillion\b|\bmillion\b/i.test(t) && t.length < 120) {
+                    html += `<div class="highlight-box">${escBold(t)}</div>`;
+                } else {
+                    html += `<p>${escBold(t)}</p>`;
+                }
+            });
+
+            return html + '</div>';
+        }
+
+        /* ── SIDEBAR SEARCH ── */
+        function filterSuggestions(query) {
+            const q = query.toLowerCase().trim();
+            document.getElementById('searchClear').classList.toggle('visible', q.length > 0);
+
+            let anyVisible = false;
+            document.querySelectorAll('.suggestion').forEach(s => {
+                const match = !q || s.querySelector('p').textContent.toLowerCase().includes(q);
+                s.classList.toggle('hidden', !match);
+                if (match) anyVisible = true;
+            });
+
+            if (q) {
+                ['fin', 'ops', 'str', 'lead'].forEach(id => {
+                    const cat = document.getElementById('cat-' + id);
+                    const chev = document.getElementById('chev-' + id);
+                    if (cat) cat.classList.remove('closed');
+                    if (chev) chev.classList.add('open');
+                });
+            }
+
+            let noRes = document.getElementById('noResults');
+            if (!noRes) {
+                noRes = document.createElement('div');
+                noRes.id = 'noResults'; noRes.className = 'no-results';
+                noRes.textContent = 'No matching questions found.';
+                document.getElementById('sidebarInner').insertBefore(noRes, document.querySelector('.sidebar-divider'));
+            }
+            noRes.classList.toggle('visible', !anyVisible && q.length > 0);
+        }
+
+        function clearSearch() {
+            const inp = document.getElementById('sidebarSearch');
+            inp.value = ''; filterSuggestions(''); inp.focus();
+        }
+
+        /* ── UTILS ── */
+        function scrollDown() {
+            const m = document.getElementById('messages');
+            m.scrollTop = m.scrollHeight;
+        }
+
+        function esc(t) {
+            return t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
+        }
+
+        function escBold(t) {
+            return esc(t).replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        }
+    </script>
+</body>
+
+</html>
