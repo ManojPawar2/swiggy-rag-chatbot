@@ -1,151 +1,105 @@
-# 📄 Swiggy Annual Report — RAG Chatbot
+# 📄 Swiggy Annual Report — AI Chatbot
 
-A production-ready **Retrieval-Augmented Generation (RAG)** chatbot that answers questions **strictly and exclusively** from the Swiggy Annual Report — no hallucinations, no external knowledge.
+A production-ready **Retrieval-Augmented Generation (RAG)** chatbot with a modern **Web UI** that answers questions strictly from the Swiggy Annual Report — no hallucinations, no external knowledge.
 
----
-
-## 📥 Report Source
-
-> **Official Swiggy Annual Report (FY 2023–24):**
-> [https://www.swiggy.com/corporate/investors](https://www.swiggy.com/corporate/investors)
->
-> Direct PDF (BSE filing):
-> [https://www.bseindia.com/xml-data/corpfiling/AttachHis/0f1c46c0-b1c1-4b0c-9bb4-5e83a51d8e2a.pdf](https://www.bseindia.com/xml-data/corpfiling/AttachHis/0f1c46c0-b1c1-4b0c-9bb4-5e83a51d8e2a.pdf)
-
-Download the PDF and place it in the project root as `swiggy_annual_report.pdf`.
+![Swiggy AI Web UI](https://img.shields.io/badge/UI-Flask%20%2B%20HTML5-FC8019?style=flat-square)
+![Embeddings](https://img.shields.io/badge/Embeddings-BAAI%2Fbge--small--en-blue?style=flat-square)
 
 ---
 
-## 🏛️ Architecture Overview
+## 🏛️ Architecture
 
-```
-PDF File
-  │
-  ▼
-[PyMuPDF Loader]        →  Raw text + page number metadata
-  │
-  ▼
-[Text Cleaner]          →  Remove headers/footers, normalize whitespace
-  │
-  ▼
-[RecursiveCharTextSplitter]  chunk_size=800, overlap=150
-  │
-  ▼
-[HuggingFace Embeddings]  →  BAAI/bge-small-en-v1.5  (local, no API key)
-  │
-  ▼
-[FAISS Vector Store]    →  Persisted to ./faiss_index/ (built once)
-  │
-  ▼
-[Similarity Retrieval]  →  top_k=5, L2 distance threshold=0.80
-  │
-  ▼
-[Grounded Prompt]  +  Retrieved Chunks (with page labels)
-  │
-  ▼
-[LLM: Gemini 1.5 Flash / GPT-3.5-turbo]  temperature=0
-  │
-  ▼
-Answer with page citations  OR  "The information is not available in the provided report."
-```
+### Frontend (Web UI)
+- Pure HTML/CSS/JS (no heavy frameworks)
+- Animated chat interface with citations and suggested questions
+- Connects to the backend via `POST /ask`
+
+### Backend (Flask & RAG Pipeline)
+1. **Flask (`app.py`)**: Serves the UI and handles API requests. Loads the ML models *once* at startup for blazing-fast responses.
+2. **Document Pipeline**: PyMuPDF + Tesseract OCR (fallback) extracts text from the PDF.
+3. **Chunking**: RecursiveCharacterTextSplitter (`chunk_size=800`, `overlap=150`).
+4. **Embeddings & Vector Store**: Uses `BAAI/bge-small-en-v1.5` (local) and saves to a persistent `FAISS` index on disk.
+5. **LLM**: Grounded prompt strategy with Temperature = 0. Connects to Gemini, Groq, OpenAI, or local Ollama.
 
 ---
 
-## 📁 Project Structure
+## ⚙️ Local Setup
 
-```
-RAG Project Chatbot/
-├── main.py              # CLI entry point
-├── rag_pipeline.py      # Core pipeline (load → chunk → embed → retrieve → answer)
-├── config.py            # All tunable parameters
-├── prompts.py           # Grounded prompt template
-├── requirements.txt     # Python dependencies
-├── .env.example         # Environment variable template
-└── faiss_index/         # Auto-created after first run (FAISS index on disk)
-```
-
----
-
-## ⚙️ Setup
-
-### 1. Clone / Copy Project
+### 1. Clone & Environment
 
 ```bash
-cd "d:\RAG Project Chatbot"
-```
+git clone https://github.com/YOUR_USERNAME/swiggy-rag-chatbot.git
+cd swiggy-rag-chatbot
 
-### 2. Create & Activate Virtual Environment
-
-```bash
+# Create virtual environment
 python -m venv venv
-# Windows
+
+# Activate (Windows)
 venv\Scripts\activate
-# macOS / Linux
+# Activate (macOS/Linux)
 source venv/bin/activate
 ```
 
-### 3. Install Dependencies
+### 2. Install Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 4. Configure Environment
+### 3. Configure API Keys
 
 ```bash
-copy .env.example .env      # Windows
-# cp .env.example .env      # macOS/Linux
+copy .env.example .env
 ```
-
-Edit `.env` and fill in your API key:
-
-```
-LLM_PROVIDER=gemini
+Edit `.env` and set your preferred LLM:
+```dotenv
+LLM_PROVIDER=gemini        # or groq, openai, ollama
 GEMINI_API_KEY=your_key_here
-PDF_PATH=swiggy_annual_report.pdf
 ```
 
-> **Get a free Gemini API key:** [https://aistudio.google.com/app/apikey](https://aistudio.google.com/app/apikey)
-
-### 5. Download the PDF
-
-Place the Swiggy Annual Report PDF in the project root as `swiggy_annual_report.pdf`.
+### 4. Provide the PDF
+Download the Swiggy Annual Report PDF and place it in the project root as `swiggy_annual_report.pdf`.
 
 ---
 
-## 🚀 Running the Chatbot
+## 🚀 Running the App
 
+### Option 1: Web UI (Recommended)
 ```bash
-# Default — reads PDF_PATH from .env
-python main.py
-
-# Override PDF path at runtime
-python main.py --pdf path/to/swiggy_annual_report_2024.pdf
-
-# Force re-indexing (if the PDF changes)
-python main.py --rebuild
+python app.py
 ```
+Open **http://localhost:5000** in your browser to use the graphical chat interface.
 
-**First run** builds the FAISS index (~1–3 minutes depending on PDF size).  
-**Subsequent runs** load the saved index in seconds.
+### Option 2: Command Line (CLI)
+```bash
+python main.py
+```
+Drops you into an interactive terminal Q&A session.
 
 ---
 
-## 💬 Example Session
+## 🌐 Deployment (GitHub to Render)
 
+This project is configured for easy free-tier deployment on [Render](https://render.com/).
+
+### Step 1: Push updates to GitHub
+Whenever you make changes locally, push them to your repository:
+```bash
+git add .
+git commit -m "Your commit message here"
+git push
 ```
-🔍 You: What is Swiggy's total revenue for FY2024?
 
-🤖 Bot:
-According to the report, Swiggy's total revenue from operations for FY2024 was
-₹11,247 crore, representing a 34.3% year-on-year growth.
-(Source: Page 112, 114)
+### Step 2: Deploy on Render
+1. Go to **[Render Dashboard](https://dashboard.render.com/)** → **New +** → **Web Service**
+2. Connect your GitHub repository.
+3. Render will auto-detect the `render.yaml` file, or you can manually configure:
+   - **Build Command:** `pip install -r requirements.txt`
+   - **Start Command:** `python app.py`
+4. Add your API key in the Render **Environment** settings (e.g., `GEMINI_API_KEY`).
+5. Click **Deploy**.
 
-🔍 You: What is Apple's revenue?
-
-🤖 Bot:
-The information is not available in the provided report.
-```
+> **Note on Free Tier:** Render's free tier spins down after 15 minutes of inactivity. The first request after a spin-down will take ~30-50 seconds to load the FAISS index and embedding models into memory.
 
 ---
 
@@ -153,45 +107,19 @@ The information is not available in the provided report.
 
 | Mechanism | How it works |
 |---|---|
-| **Similarity threshold** | Chunks with L2 distance > 0.80 are discarded; if no chunk passes, fallback is returned *without calling the LLM* |
-| **Grounded prompt** | LLM is explicitly told: *answer ONLY from context, do NOT use external knowledge* |
-| **Temperature = 0** | Deterministic output; minimises creative generation |
-| **No conversation history** | Each query is independent; no prior answers pollute the context |
-| **Page citations** | Every answer cites page numbers so users can verify |
+| **Similarity Threshold** | Irrelevant chunks are discarded before reaching the LLM. |
+| **Grounded Prompt** | LLM is explicitly told to answer ONLY from context. |
+| **Temperature = 0** | Deterministic output; minimises creative generation. |
+| **Page Citations** | Every answer cites specific page numbers from the PDF. |
 
 ---
 
-## 🔧 Configuration Cheat Sheet
+## 🔧 Configuration (`config.py`)
 
-Open `config.py` to tune these values:
+Tune the core engine entirely from one file:
 
-| Parameter | Default | Purpose |
-|---|---|---|
-| `CHUNK_SIZE` | 800 | Characters per chunk |
-| `CHUNK_OVERLAP` | 150 | Characters of overlap between chunks |
-| `TOP_K` | 5 | Chunks retrieved per query |
-| `SIMILARITY_THRESHOLD` | 0.80 | Max L2 distance for a chunk to be considered relevant |
-| `LLM_TEMPERATURE` | 0.0 | 0 = deterministic; increase for more creative answers |
-| `EMBEDDING_MODEL` | `BAAI/bge-small-en-v1.5` | Local HuggingFace embedding model |
-
----
-
-## 📦 Dependencies
-
-See `requirements.txt`.  Key packages:
-
-- **PyMuPDF** — PDF text extraction
-- **LangChain** — pipeline orchestration
-- **sentence-transformers** — local embeddings
-- **faiss-cpu** — vector similarity search
-- **langchain-google-genai** — Gemini LLM (if using Gemini)
-- **langchain-openai** — OpenAI LLM (if using OpenAI)
-- **python-dotenv** — `.env` file loading
-
----
-
-## ⚠️ Known Limitations
-
-- Only works with the single PDF specified at startup.
-- Image-heavy pages (charts, infographics) yield little text — the system gracefully skips near-empty pages.
-- Table extraction quality depends on PDF encoding; some tables may be linearised.
+- `CHUNK_SIZE` (default: 800)
+- `CHUNK_OVERLAP` (default: 150)
+- `TOP_K` (default: 7)
+- `SIMILARITY_THRESHOLD` (default: 1.30)
+- `LLM_PROVIDER` (gemini, groq, etc.)
