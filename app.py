@@ -46,22 +46,28 @@ log = logging.getLogger(__name__)
 app = Flask(__name__, template_folder="templates")
 
 # ─────────────────────────────────────────────────────────────────────────────
-# One-time RAG initialisation at startup
+# Lazy-loaded RAG components
 # ─────────────────────────────────────────────────────────────────────────────
 
-log.info("Initialising RAG pipeline…")
-try:
-    embeddings  = get_embedding_model()
-    vectorstore = get_or_build_vector_store(config.PDF_PATH, embeddings)
-    llm         = get_llm()
-    log.info("✅  RAG pipeline ready.")
-except FileNotFoundError as e:
-    log.error(str(e))
-    sys.exit(1)
-except Exception as e:
-    log.error(f"Initialisation failed: {e}")
-    sys.exit(1)
+embeddings = None
+vectorstore = None
+llm = None
 
+def _ensure_rag_loaded():
+    """Load the models on the first request so the server boots instantly."""
+    global embeddings, vectorstore, llm
+    if llm is not None:
+        return  # Already loaded
+
+    log.info("Lazy-loading RAG pipeline…")
+    try:
+        embeddings  = get_embedding_model()
+        vectorstore = get_or_build_vector_store(config.PDF_PATH, embeddings)
+        llm         = get_llm()
+        log.info("✅  RAG pipeline ready.")
+    except Exception as e:
+        log.error(f"Initialisation failed: {e}")
+        raise
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Routes
@@ -89,6 +95,7 @@ def ask():
     log.info(f"Question: {question!r}")
 
     try:
+        _ensure_rag_loaded()
         answer, pages = answer_question(question, vectorstore, llm)
     except Exception as e:
         log.error(f"RAG error: {e}")
